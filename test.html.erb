@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <h1>テスト！！！！！！！！！！！！！</h1>
+    <% require 'pg' %>
+    <% connection = PG::connect(dbname: "goya") %>
+    <% connection.internal_encoding = "UTF-8" %>
+    <form action="indicate.cgi" method="POST">
+       下記に文字を入力してください<br><br>
+      <input type="text"  name="input" ><br>
+      <input type="submit" name="送信" >
+    </form>
+    <% result = connection.exec("select weight, give_for from crops;") %>
+    <% data = [] %>
+    <% result.each do |record| %>
+      <%  data << "ゴーヤの大きさ：#{record["weight"]}　売った相手：#{record["give_for"]}" %>
+    <% end %>
+    <form action="goya.cgi" method="POST">
+       下記のボタンを押すと、ゴーヤの大きさと売った相手の情報ページに飛びます<br><br>
+       <!-- valueには、送りたいデータを代入する -->
+       <!-- name="goya"を、情報の目印とする -->
+      <input type="text" name="goya" value="<%= data.join(' ') %>">
+      <input type="submit" name="送信" >
+    </form>
+    <br><br>
+      <% result = connection.exec("select * from crops where not (give_for = '自家消費');") %>
+      <% data2 = [] %>
+      <% result.each do |record| %>
+        <%  data2 << "ゴーヤの長さ：#{record["length"]} ゴーヤの大きさ：#{record["weight"]} ゴーヤの品質：#{record["quality"]} 売った相手：#{record["give_for"]} 日付：#{record["date"]}" %>
+      <% end %>
+      <form action="give_away.cgi" method="POST">
+         下記のボタンを押すと、ゴーヤの自家消費以外の情報ページに飛びます<br><br>
+        <input type="text" name="give_away" value="<%= data2.join(' ') %>">
+        <input type="submit" name="送信" >
+    </form>
+    <br>
+      <% result = connection.exec("select * from crops where quality = false") %>
+      <% data3 = [] %>
+      <% result.each do |record| %>
+      <%  data3 << " ゴーヤの長さ：#{record["length"]} ゴーヤの大きさ：#{record["weight"]} ゴーヤの品質：#{record["quality"]} 売った相手：#{record["give_for"]} 日付：#{record["date"]} " %>
+    <% end %>
+    <form action="bad_goya.cgi" method="POST">
+       下記のボタンを押すと、ゴーヤの品質が悪いものの情報ページに飛びます<br><br>
+      <input type="text" name="bad_goya" value="<%= data3.join(' ') %>">
+      <input type="submit" name="送信" >
+    </form>
+  </body>
+</html>
+
+
