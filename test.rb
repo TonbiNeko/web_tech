@@ -20,3 +20,4 @@ server.mount('/goya.cgi', WEBrick::HTTPServlet::CGIHandler,'goya.rb')
 server.mount('/give_away.cgi', WEBrick::HTTPServlet::CGIHandler,'give_away.rb')
 server.mount('/bad_goya.cgi', WEBrick::HTTPServlet::CGIHandler,'bad_goya.rb')
 server.start
+
